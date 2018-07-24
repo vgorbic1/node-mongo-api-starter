@@ -5,16 +5,22 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const {ObjectID} = require('mongodb');
 
-var {mongoose} = require('./db/mongoose');
-var {Todo} = require('./models/todo');
-var {User} = require('./models/user');
-var {authenticate} = require('./middleware/authenticate');
+const {mongoose} = require('./db/mongoose');
+const {Todo} = require('./models/todo');
+const {User} = require('./models/user');
+const {authenticate} = require('./middleware/authenticate');
 
-var app = express();
+const app = express();
 const port = process.env.PORT;
 
 app.use(bodyParser.json());
 
+
+/**
+* @route   POST /todos
+* @desc    Post todos
+* @access  Private
+ */
 app.post('/todos', authenticate, (req, res) => {
   var todo = new Todo({
     text: req.body.text,
@@ -28,6 +34,12 @@ app.post('/todos', authenticate, (req, res) => {
   });
 });
 
+
+/**
+* @route   GET /todos
+* @desc    Get todos
+* @access  Private
+ */
 app.get('/todos', authenticate, (req, res) => {
   Todo.find({
     _creator: req.user._id
@@ -38,6 +50,12 @@ app.get('/todos', authenticate, (req, res) => {
   });
 });
 
+
+/**
+* @route   GET /todos:id
+* @desc    Get single todo
+* @access  Private
+ */
 app.get('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
@@ -59,6 +77,12 @@ app.get('/todos/:id', authenticate, (req, res) => {
   });
 });
 
+
+/**
+* @route   DELETE /todos/:id
+* @desc    Delete single todo
+* @access  Private
+ */
 app.delete('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
 
@@ -80,6 +104,12 @@ app.delete('/todos/:id', authenticate, (req, res) => {
   });
 });
 
+
+/**
+* @route   PATCH /todos/:id
+* @desc    Update single todo
+* @access  Private
+ */
 app.patch('/todos/:id', authenticate, (req, res) => {
   var id = req.params.id;
   var body = _.pick(req.body, ['text', 'completed']);
@@ -106,7 +136,12 @@ app.patch('/todos/:id', authenticate, (req, res) => {
   })
 });
 
-// POST /users
+
+/**
+* @route   POST /users
+* @desc    Register new user
+* @access  Public
+ */
 app.post('/users', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
   var user = new User(body);
@@ -120,10 +155,22 @@ app.post('/users', (req, res) => {
   })
 });
 
+
+/**
+* @route   GET /users/me
+* @desc    Get current registered user info
+* @access  Private
+ */
 app.get('/users/me', authenticate, (req, res) => {
   res.send(req.user);
 });
 
+
+/**
+* @route   POST /users/login
+* @desc    Login with email and password
+* @access  Public
+ */
 app.post('/users/login', (req, res) => {
   var body = _.pick(req.body, ['email', 'password']);
 
@@ -136,6 +183,12 @@ app.post('/users/login', (req, res) => {
   });
 });
 
+
+/**
+* @route   DELETE /users/me/token
+* @desc    Logout current user
+* @access  Private
+ */
 app.delete('/users/me/token', authenticate, (req, res) => {
   req.user.removeToken(req.token).then(() => {
     res.status(200).send();
@@ -144,12 +197,20 @@ app.delete('/users/me/token', authenticate, (req, res) => {
   });
 });
 
+
+/**
+* @route   GET /test
+* @desc    Get test page
+* @access  Public
+ */
 app.get('/test', (req, res) => {
   res.send('test is successful');
 })
 
+
+/** Start server */
 app.listen(port, () => {
-  console.log(`Started up at port ${port}`);
+  console.log(`Running on port ${port}...`);
 });
 
 module.exports = {app};

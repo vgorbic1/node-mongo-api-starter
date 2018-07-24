@@ -8,7 +8,7 @@ const userOneId = new ObjectID();
 const userTwoId = new ObjectID();
 const users = [{
   _id: userOneId,
-  email: 'andrew@example.com',
+  email: 'test1@test.com',
   password: 'userOnePass',
   tokens: [{
     access: 'auth',
@@ -16,7 +16,7 @@ const users = [{
   }]
 }, {
   _id: userTwoId,
-  email: 'jen@example.com',
+  email: 'test2@test.com',
   password: 'userTwoPass',
   tokens: [{
     access: 'auth',
@@ -26,11 +26,11 @@ const users = [{
 
 const todos = [{
   _id: new ObjectID(),
-  text: 'First test todo',
+  text: 'First test',
   _creator: userOneId
 }, {
   _id: new ObjectID(),
-  text: 'Second test todo',
+  text: 'Second test',
   completed: true,
   completedAt: 333,
   _creator: userTwoId
